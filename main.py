@@ -8,8 +8,8 @@ import shutil
 
 # These are the API keys for the Zoom API 
 # These can be put into a variable environment file so they aren't hardcoded
-API_KEY = ''
-API_SEC = ''
+API_KEY = ' '
+API_SEC = ' '
 
 # create a function to generate a JWT token
 # using the pyjwt library
