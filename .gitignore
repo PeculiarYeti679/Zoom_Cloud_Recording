@@ -1,0 +1,6 @@
+# Ignore JSON files
+*.json
+
+# Ignore mp4
+*.mp4
+
