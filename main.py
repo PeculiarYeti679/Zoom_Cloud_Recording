@@ -5,11 +5,13 @@ from time import time
 from bs4 import BeautifulSoup
 import os 
 import shutil
+import smtplib
+from datetime import datetime
 
 # These are the API keys for the Zoom API 
 # These can be put into a variable environment file so they aren't hardcoded
-API_KEY = ' '
-API_SEC = ' '
+API_KEY = ''
+API_SEC = ''
 
 # create a function to generate a JWT token
 # using the pyjwt library
@@ -134,7 +136,38 @@ def get_recordings(user_id):
         with open(file_name, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
     return file_list
-                  
+
+def send_email(videos):
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+    number_of_videos = len(videos)
+
+    gmail_user = ''
+    gmail_password = ''
+
+    sent_from = gmail_user
+    to = ['', '']
+    subject = 'Zoom Cloud Recording'
+    body = f'The script has has completed at {current_time} and downloaded {number_of_videos} videos.'
+
+    email_text = """\
+    From: %s
+    To: %s
+    Subject: %s
+
+    %s
+    """ % (sent_from, ", ".join(to), subject, body)
+
+    try:
+        smtp_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        smtp_server.ehlo()
+        smtp_server.login(gmail_user, gmail_password)
+        smtp_server.sendmail(sent_from, to, email_text)
+        smtp_server.close()
+        print ("Email sent successfully!")
+    except Exception as ex:
+        print ("Something went wrong….",ex)
+
 
 def load_file(files):
     """This function will load the json files created in the get_recordings().
@@ -146,12 +179,15 @@ def load_file(files):
         
     Returns:
         Saved the recordings to the local directory or a specified directory.
+        List of videos that have been saved to be used to send email verification.
     """
     
     #creating a dictionary to store the email and unique id
     user_list = list_users()
     #print(user_list)
     
+    #empty list to store names of videos downloaded
+    videos_downloaded = []
     
     #this is a reversed dictionary that will store the user's unique id and email
     reversed_dictionary = {value : key for (key, value) in user_list.items()}
@@ -217,6 +253,9 @@ def load_file(files):
                 #file_name = "video" + str(i) + ".mp4"
                 #############################################
                 
+                #adding the name of the current video being downloaded to the list
+                videos_downloaded.append(name)
+                
                 #downloading the video using the link from the users' JSON file
                 r = requests.get(download_url, stream = True)
                 with open(name, 'wb') as f:
@@ -227,6 +266,8 @@ def load_file(files):
                 #print ("All videos downloaded!")
                 #shutil.move(name, '.\\videos')
                 
+    send_email(videos_downloaded)
+                
    
 #calling the functions that will perform the steps required to download the video
 # The if call is not necessary, but is conventional syntax for scripts   
@@ -234,4 +275,4 @@ if __name__ == '__main__':
     user_list = list_users()
     user_id = get_user_id(user_list)
     files = get_recordings(user_id)
-    load_file(files) 
+    load_file(files)
