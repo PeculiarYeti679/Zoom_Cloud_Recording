@@ -5,7 +5,7 @@ from time import time
 from bs4 import BeautifulSoup
 import os 
 import shutil
-import smtplib, ssl
+import smtplib
 from datetime import datetime
 
 # These are the API keys for the Zoom API 
@@ -141,18 +141,33 @@ def send_email(videos):
     now = datetime.now()
     current_time = now.strftime("%H:%M:%S")
     number_of_videos = len(videos)
-    port = 456
-    smtp_server = "smtp.gmail.com"
-    sender_email = "@gmail.com"  # Enter your address
-    receiver_email = "@gmail.com"  # Enter receiver address
-    password = "!"
-    message = f"There were {number_of_videos} videos saved. The script completed running at {current_time}."
 
-    context = ssl.create_default_context()
-    with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
-        server.login(sender_email, password)
-        server.sendmail(sender_email, receiver_email, message)
-                  
+    gmail_user = ''
+    gmail_password = ''
+
+    sent_from = gmail_user
+    to = ['', '']
+    subject = 'Zoom Cloud Recording'
+    body = f'The script has has completed at {current_time} and downloaded {number_of_videos} videos.'
+
+    email_text = """\
+    From: %s
+    To: %s
+    Subject: %s
+
+    %s
+    """ % (sent_from, ", ".join(to), subject, body)
+
+    try:
+        smtp_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        smtp_server.ehlo()
+        smtp_server.login(gmail_user, gmail_password)
+        smtp_server.sendmail(sent_from, to, email_text)
+        smtp_server.close()
+        print ("Email sent successfully!")
+    except Exception as ex:
+        print ("Something went wrong….",ex)
+
 
 def load_file(files):
     """This function will load the json files created in the get_recordings().
