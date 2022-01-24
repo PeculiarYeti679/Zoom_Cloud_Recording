@@ -1,6 +1,14 @@
 # Ignore JSON files
 *.json
+recordings.json_azTdBdOQhC_Djhe3_Mtdg
+recordings.json9SF-B-F8Q2OF8ecsPvmkVw
+recordings.json85g4TCVjR9Olmy-4hyO0gw
+recordings.json147mYAckTk6JeMsKnEglGQ
+recordings.jsonfE7C1petSsCTYYTljOGbpw
+recordings.jsonNKyAksmESPGaum7GRkXw2Q
 
 # Ignore mp4
 *.mp4
 
+# Ignore env
+*env
