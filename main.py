@@ -264,7 +264,7 @@ def load_file(files):
                             f.write(chunk)
                     #print ("%s downloaded!\n"%file_name)
                 #print ("All videos downloaded!")
-                #shutil.move(name, '.\\videos')
+                shutil.move(name, '.\\videos')
                 
     send_email(videos_downloaded)
                 
