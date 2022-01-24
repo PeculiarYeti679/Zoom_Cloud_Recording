@@ -7,11 +7,16 @@ import os
 import shutil
 import smtplib
 from datetime import datetime
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # These are the API keys for the Zoom API 
 # These can be put into a variable environment file so they aren't hardcoded
-API_KEY = ''
-API_SEC = ''
+API_KEY = os.getenv("ZOOM_ID")
+API_SEC = os.getenv("ZOOM_SECRET_KEY")
+GMAIL_USER = os.getenv("GMAIL_ID")
+GMAIL_SEC = os.getenv("GMAIL_SECRET")
 
 # create a function to generate a JWT token
 # using the pyjwt library
@@ -142,11 +147,11 @@ def send_email(videos):
     current_time = now.strftime("%H:%M:%S")
     number_of_videos = len(videos)
 
-    gmail_user = ''
-    gmail_password = ''
+    gmail_user = GMAIL_USER
+    gmail_password = GMAIL_SEC
 
     sent_from = gmail_user
-    to = ['', '']
+    to = [GMAIL_USER]
     subject = 'Zoom Cloud Recording'
     body = f'The script has has completed at {current_time} and downloaded {number_of_videos} videos.'
 
